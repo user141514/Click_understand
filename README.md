@@ -39,7 +39,7 @@ If the Linux file picker hides a directory, press `Ctrl+H` to show hidden files.
 
 Prefer loading the repository root directly. If you instead load a copied/staged directory, that directory becomes part of the runtime contract and must continue to exist.
 
-After reloading this extension in `chrome://extensions`, refresh any ChatGPT tabs that were already open. Chrome does not retroactively recreate a freshly loaded content script inside an old document, so an existing tab can retain the pre-reload behavior until navigation or refresh.
+As of v0.2.0, the background service worker backfills `popup-guard.js` into ChatGPT tabs that were already open when the extension starts or is reloaded. A manual page refresh should no longer be required just to activate Popup Guard in an old document.
 
 ## Known failure modes
 
@@ -68,7 +68,9 @@ Restore that exact directory or remove/reload the unpacked extension from the re
 
 ### Only an old ChatGPT tab still behaves incorrectly after extension reload
 
-A tab that was already open before the extension reload may still be running the previous document state. Refresh that tab once before treating it as evidence that the current Popup Guard build failed.
+Versions before v0.2.0 relied only on declarative content scripts, so tabs opened before installation/reload could keep running without Popup Guard until navigation or refresh. v0.2.0 closes that lifecycle gap by having the extension service worker inject the same guard into already-open ChatGPT tabs when the extension starts.
+
+If an old tab still fails on v0.2.0, first verify that the target host/profile is actually running v0.2.0 before changing the popup matcher.
 
 ### ChatGPT popup signature changed
 

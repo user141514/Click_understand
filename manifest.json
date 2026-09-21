@@ -1,8 +1,13 @@
 {
   "manifest_version": 3,
   "name": "ChatGPT Popup Guard",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Dismisses the known ChatGPT request-rate popup without owning conversation automation.",
+  "permissions": ["scripting"],
+  "host_permissions": ["https://chatgpt.com/*"],
+  "background": {
+    "service_worker": "background.js"
+  },
   "content_scripts": [
     {
       "matches": ["https://chatgpt.com/*"],
