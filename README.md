@@ -43,6 +43,16 @@ After reloading this extension in `chrome://extensions`, refresh any ChatGPT tab
 
 ## Known failure modes
 
+### Correct source verified on the wrong host or Chrome profile
+
+A passing source test or a working browser probe on one machine does not prove that the target browser instance has Popup Guard installed. Treat deployment identity as the tuple:
+
+`host + Chrome profile + unpacked extension path`
+
+Before changing the matcher, verify the failing tab belongs to the same browser instance/profile where Popup Guard is registered. If the target profile has no Popup Guard entry at all, fix deployment first; source-level changes cannot affect that browser.
+
+This failure was observed when the real failing ChatGPT tab lived on a different host from the browser instance used for the initial Popup Guard verification. The live popup DOM itself still matched the existing rule exactly; the target Chrome profile simply had no Popup Guard registration.
+
 ### Registered unpacked path exists in Chrome, but the directory is gone
 
 This failure was observed on 2026-09-20. Chrome still had Popup Guard registered with the expected `https://chatgpt.com/*` host access, but the recorded unpacked extension path pointed to a directory that no longer existed. The source repository itself was intact.
